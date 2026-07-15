@@ -17,6 +17,18 @@
     "start": "npm run start -w ausome"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@tailwindcss/vite": "^4.3.2",
+    "@vitejs/plugin-react": "^5.2.0",
+    "autoprefixer": "^10.5.3",
+    "canvas-confetti": "^1.9.4",
+    "concurrently": "^9.1.2",
+    "esbuild": "^0.25.12",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.42.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^4.3.2",
+    "typescript": "~5.8.2",
+    "vite": "^6.4.3"
   }
 }
