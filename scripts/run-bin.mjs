@@ -31,11 +31,34 @@ function resolveBin(binName) {
   throw new Error(`Could not find bin for ${binName} under ${root}`);
 }
 
+function isNativeBinary(file) {
+  try {
+    const fd = fs.openSync(file, "r");
+    const head = Buffer.alloc(4);
+    fs.readSync(fd, head, 0, 4, 0);
+    fs.closeSync(fd);
+    const elf = head[0] === 0x7f && head[1] === 0x45 && head[2] === 0x4c && head[3] === 0x46;
+    const mz = head[0] === 0x4d && head[1] === 0x5a;
+    return elf || mz;
+  } catch {
+    return false;
+  }
+}
+
 const resolved = resolveBin(name);
-const result = spawnSync(process.execPath, [resolved, ...args], {
+const runsNative = isNativeBinary(resolved) || path.extname(resolved) === ".exe";
+const command = runsNative ? resolved : process.execPath;
+const commandArgs = runsNative ? args : [resolved, ...args];
+
+const result = spawnSync(command, commandArgs, {
   cwd,
   stdio: "inherit",
   env: process.env,
 });
+
+if (result.error) {
+  console.error(result.error.message);
+  process.exit(1);
+}
 
 process.exit(result.status ?? 1);
