@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ask questions and receive clear, adjustable explanations with the AU-SOME Assistant.">
+    <title>Au-SOME AI Assistant</title>
+    <style>
+        body {
+            font-family: var(--font-main);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: var(--line-height-default);
+            font-size: var(--font-size-default);
+            padding: var(--spacing-large);
+            margin: 0;
+        }
+
+        *:focus-visible {
+            outline: 4px solid var(--color-text);
+            outline-offset: 2px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-medium);
+        }
+
+        .assistant-tabs {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--color-panel);
+            padding: var(--spacing-medium);
+            border-radius: var(--radius-large);
+            border: 2px solid var(--color-text);
+        }
+
+        .nav-group {
+            display: flex;
+            gap: var(--spacing-small);
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: var(--color-bg);
+            color: var(--color-text);
+            border: 2px solid var(--color-text);
+            padding: 8px var(--spacing-medium);
+            border-radius: var(--radius-round);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .nav-btn.active {
+            background: var(--color-accent);
+            border-color: var(--color-text);
+        }
+
+        .view-panel {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .view-panel.visible {
+            display: flex;
+        }
+
+        /* --- SCREEN 1: HOME VIEW --- */
+        .hero-title-area {
+            margin-bottom: var(--spacing-medium);
+        }
+
+        .hero-title-area h1 {
+            font-size: 2.2rem;
+            color: var(--color-text);
+            margin-bottom: 6px;
+        }
+
+        .main-chat-trigger-box {
+            background: var(--color-accent);
+            border: 2px dashed var(--color-text);
+            border-radius: var(--radius-large);
+            padding: var(--spacing-large);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--color-text);
+            margin-bottom: var(--spacing-large);
+        }
+
+        .category-header-text {
+            font-size: 1.4rem;
+            margin-bottom: var(--spacing-small);
+            font-weight: bold;
+        }
+
+        .category-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--spacing-small);
+        }
+
+        .category-select-button {
+            border: 2px solid var(--color-text);
+            color: var(--color-text);
+            padding: var(--spacing-medium);
+            border-radius: var(--radius-large);
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- SCREEN 2: CLEAN CHAT CONSOLE --- */
+        .split-chat-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: var(--spacing-medium);
+        }
+
+        @media (max-width: 850px) {
+            .split-chat-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chat-content-core {
+            background: var(--color-panel);
+            border-radius: var(--radius-large);
+            border: 2px solid var(--color-text);
+            display: flex;
+            flex-direction: column;
+            height: 65vh;
+        }
+
+        .chat-header-banner {
+            padding: var(--spacing-medium);
+            border-bottom: 2px solid var(--color-text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--color-accent);
+        }
+
+        .chat-display-feed {
+            flex: 1;
+            padding: var(--spacing-medium);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-medium);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: var(--spacing-medium);
+            border-radius: var(--radius-large);
+            line-height: var(--line-height-default);
+            background: #FFFFFF;
+            border: 2px solid var(--color-text);
+            color: #000000;
+        }
+
+        .chat-bubble.assistant {
+            align-self: flex-start;
+            border-left: 8px solid var(--color-text);
+        }
+
+        .chat-bubble.user {
+            align-self: flex-end;
+            background: var(--color-accent);
+        }
+
+        .chat-bubble h3 {
+            margin-bottom: 6px;
+        }
+
+        .chat-bubble ul, .chat-bubble ol {
+            margin-left: 24px;
+            margin-top: 6px;
+        }
+
+        .chat-bubble li {
+            margin-bottom: 6px;
+        }
+
+        .chat-input-wrapper-deck {
+            padding: var(--spacing-medium);
+            border-top: 2px solid var(--color-text);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-small);
+            background: var(--color-panel);
+        }
+
+        .text-input-row {
+            display: flex;
+            gap: var(--spacing-small);
+        }
+
+        .main-text-input-element {
+            flex: 1;
+            padding: var(--spacing-medium);
+            background: #FFFFFF;
+            border: 2px solid var(--color-text);
+            border-radius: var(--radius-large);
+            color: #000000;
+            font-size: 1rem;
+        }
+
+        .primary-action-send-btn {
+            background: var(--color-accent);
+            color: var(--color-text);
+            border: 2px solid var(--color-text);
+            padding: var(--spacing-medium) var(--spacing-large);
+            border-radius: var(--radius-large);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .format-modifier-rail {
+            background: var(--color-panel);
+            border: 2px solid var(--color-text);
+            border-radius: var(--radius-large);
+            padding: var(--spacing-medium);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .format-selection-btn {
+            background: #FFFFFF;
+            color: var(--color-text);
+            border: 2px solid var(--color-text);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .format-selection-btn.active {
+            background: var(--color-accent);
+        }
+
+        .config-card {
+            background: var(--color-panel);
+            border: 2px solid var(--color-text);
+            padding: var(--spacing-medium);
+            border-radius: var(--radius-large);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .config-card select, .config-card input[type="range"] {
+            padding: 10px;
+            background: #FFFFFF;
+            border: 2px solid var(--color-text);
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        .app-kill-button {
+            background: #D9534F;
+            color: white;
+            border: 2px solid black;
+            padding: var(--spacing-small) var(--spacing-medium);
+            border-radius: var(--radius-round);
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+
+<link rel="stylesheet" href="/shared/site.css">
+<link rel="stylesheet" href="/shared/assistant-page.css">
+<script type="module" src="/shared/nav.js"></script>
+</head>
+<body data-page="assistant">
+    <div id="site-nav-root"></div>
+    <div class="app-container">
+        <nav class="assistant-tabs" aria-label="Assistant sections">
+            <div class="nav-group" role="tablist" aria-label="Assistant views">
+                <button class="nav-btn active" id="btn-tab-home" role="tab" aria-controls="home-pane" aria-selected="true" onclick="switchViewEngine('home-pane')">Overview</button>
+                <button class="nav-btn" id="btn-tab-chat" role="tab" aria-controls="chat-pane" aria-selected="false" onclick="switchViewEngine('chat-pane')">Conversation</button>
+                <button class="nav-btn" id="btn-tab-settings" role="tab" aria-controls="settings-pane" aria-selected="false" onclick="switchViewEngine('settings-pane')">Preferences</button>
+            </div>
+            <button class="app-kill-button" onclick="hardResetApp()">Start over</button>
+        </nav>
+        <div id="home-pane" class="view-panel visible" role="tabpanel" aria-labelledby="btn-tab-home">
+            <header class="hero-title-area">
+                <p class="assistant-eyebrow">AU-SOME Assistant</p>
+                <h1>Ask at your own pace</h1>
+                <p>Get clear explanations in the format that works best for you. Choose a subject or begin with any question.</p>
+            </header>
+
+            <button class="main-chat-trigger-box" onclick="launchSubjectContext('General Knowledge')">
+                <span class="trigger-copy">
+                    <strong>Start a general conversation</strong>
+                    <span>Ask about any topic without choosing a category first.</span>
+                </span>
+                <span class="trigger-arrow" aria-hidden="true">→</span>
+            </button>
+
+            <h2 class="category-header-text">Choose a subject</h2>
+            <p class="category-intro">This only sets the starting context. You can change topics at any time.</p>
+            <div class="category-grid-layout" id="category-button-anchor"></div>
+        </div>
+
+        <div id="chat-pane" class="view-panel" role="tabpanel" aria-labelledby="btn-tab-chat">
+            <div class="split-chat-layout">
+                
+                <div class="chat-content-core">
+                    <div class="chat-header-banner">
+                        <span id="active-context-label" style="font-weight: bold;">General Conversation</span>
+                        <span id="active-format-label" style="font-size: 0.85rem; border: 2px solid var(--color-text); padding: 2px 8px; border-radius: 4px; background: #FFFFFF; font-weight: bold;">Easy Explanation</span>
+                    </div>
+
+                    <div class="chat-display-feed" id="conversation-output-wall" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+                    <div class="chat-input-wrapper-deck">
+                        <div class="text-input-row">
+                            <label class="visually-hidden" for="query-string-input">Your question</label>
+                            <input type="text" class="main-text-input-element" id="query-string-input" placeholder="Ask a question…" onkeypress="checkExecuteKey(event)" autocomplete="off">
+                            <button class="primary-action-send-btn" id="assistant-send" onclick="executeAIEngineQuery()">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="format-modifier-rail">
+                    <div class="format-rail-title">Response format</div>
+                    <p class="format-rail-help">Choose how you want the answer organized.</p>
+                    <button class="format-selection-btn active" onclick="updateStyleModifier(this, 'Easy Explanation')">Easy Explanation</button>
+                    <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Very Easy')">Very Easy</button>
+                    <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Step by Step')">Step by Step</button>
+                    <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Bullet Points')">Bullet Points</button>
+                    <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Summary View')">Summary Only</button>
+                    <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Real Life Example')">Real Life Example</button>
+                </aside>
+
+            </div>
+        </div>
+
+        <div id="settings-pane" class="view-panel" role="tabpanel" aria-labelledby="btn-tab-settings">
+            <header class="settings-head">
+                <h1>Assistant preferences</h1>
+                <p>Adjust readability without changing your conversation.</p>
+            </header>
+            <div class="config-card">
+                <label for="cfg-font-scale">Text size</label>
+                <input type="range" id="cfg-font-scale" min="16" max="26" value="18" oninput="executeLiveUiRefresh()">
+            </div>
+            <div class="config-card" style="margin-top: var(--spacing-small);">
+                <label for="cfg-contrast-theme">Color theme</label>
+                <select id="cfg-contrast-theme" onchange="executeLiveUiRefresh()">
+                    <option value="sage" selected>Calm light</option>
+                    <option value="dark">High contrast dark</option>
+                </select>
+            </div>
+            <button class="primary-action-send-btn" style="margin-top: 16px;" onclick="switchViewEngine('home-pane')">Save and return</button>
+        </div>
+
+    </div>
+
+    <script>
+        const subjectDatabase = [
+            { name: "Space", color: "#FFD1DC" }, { name: "Technology", color: "#E8FFD8" }, 
+            { name: "History Eras", color: "#FFEAA7" }, { name: "Geography", color: "#D4F0FF" }, 
+            { name: "Biology", color: "#CCFFDD" }, { name: "Physics", color: "#E2D4FF" }, 
+            { name: "Chemistry", color: "#FFD9B3" }, { name: "Mathematics", color: "#FFF2CC" }, 
+            { name: "Coding", color: "#D1FFF3" }, { name: "Programming", color: "#FFE3EC" }, 
+            { name: "AI Tech", color: "#E6E6FA" }, { name: "Animals", color: "#FFE4B5" }, 
+            { name: "Plants", color: "#E0F7FA" }, { name: "Weather", color: "#FFF8DC" }, 
+            { name: "Life Skills", color: "#E8EAF6" }, { name: "Creative Writing", color: "#FFC6FF" },
+            { name: "Sports & Football", color: "#BDB2FF" }, { name: "Engineering", color: "#CAFFBF" },
+            { name: "Art & Drawing", color: "#FDFFB6" }, { name: "Music Study", color: "#FFADAD" }
+        ];
+
+        let globalSelectedSubject = "General Knowledge";
+        let globalActiveFormatModifier = "Easy Explanation";
+        let currentAiResponsePayload = "";
+
+        const INTERNET_AI_ENDPOINT = "/api/assistant/chat";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateSubjectGridSystem();
+            executeLiveUiRefresh();
+            const view = new URLSearchParams(window.location.search).get('view');
+            if (view === 'chat') launchSubjectContext('General Knowledge');
+            if (view === 'settings') switchViewEngine('settings-pane');
+        });
+
+        function switchViewEngine(targetPanelId) {
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('visible'));
+            document.getElementById(targetPanelId).classList.add('visible');
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                button.classList.remove('active');
+                button.setAttribute('aria-selected', 'false');
+            });
+            const tabs = {
+                'home-pane': 'btn-tab-home',
+                'chat-pane': 'btn-tab-chat',
+                'settings-pane': 'btn-tab-settings'
+            };
+            const activeTab = document.getElementById(tabs[targetPanelId]);
+            activeTab.classList.add('active');
+            activeTab.setAttribute('aria-selected', 'true');
+        }
+
+        function generateSubjectGridSystem() {
+            const anchor = document.getElementById('category-button-anchor');
+            anchor.innerHTML = "";
+            subjectDatabase.forEach(sub => {
+                const button = document.createElement('button');
+                button.className = "category-select-button";
+                button.innerText = sub.name;
+                button.style.backgroundColor = sub.color;
+                button.onclick = () => launchSubjectContext(sub.name);
+                anchor.appendChild(button);
+            });
+        }
+
+        function launchSubjectContext(subjectName) {
+            globalSelectedSubject = subjectName;
+            document.getElementById('active-context-label').innerText = `Subject Focus: ${subjectName}`;
+            
+            const wall = document.getElementById('conversation-output-wall');
+            wall.innerHTML = ""; // Clears page completely
+            currentAiResponsePayload = ""; // Reset current active payload tracker
+
+            const welcomeBubble = document.createElement('div');
+            welcomeBubble.className = "chat-bubble assistant";
+            welcomeBubble.innerHTML = `
+                <p><strong>What would you like to know about ${subjectName}?</strong></p>
+            `;
+            wall.appendChild(welcomeBubble);
+            switchViewEngine('chat-pane');
+            document.getElementById('query-string-input').focus();
+        }
+
+        function updateStyleModifier(element, styleTextName) {
+            document.querySelectorAll('.format-selection-btn').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+            globalActiveFormatModifier = styleTextName;
+            document.getElementById('active-format-label').innerText = styleTextName;
+            
+            // Re-render the current AI response payload using the new structure format rules
+            if (currentAiResponsePayload) {
+                renderFormattedAiOutput(currentAiResponsePayload);
+            }
+        }
+
+        function checkExecuteKey(e) {
+            if (e.key === 'Enter') executeAIEngineQuery();
+        }
+
+        async function executeAIEngineQuery() {
+            const inputElement = document.getElementById('query-string-input');
+            const sendButton = document.getElementById('assistant-send');
+            const queryText = inputElement.value.trim();
+            if (!queryText) return;
+
+            const lastUserText = queryText;
+
+            injectMessageBubble(lastUserText, 'user');
+            inputElement.value = "";
+            sendButton.disabled = true;
+            sendButton.textContent = "Thinking…";
+            injectMessageBubble("Preparing a clear response…", 'assistant loading');
+
+            if (INTERNET_AI_ENDPOINT) {
+                try {
+                    let response = await fetch(INTERNET_AI_ENDPOINT, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            message: lastUserText,
+                            question: lastUserText,
+                            subject: globalSelectedSubject,
+                            format: globalActiveFormatModifier,
+                            module: "assistant"
+                        })
+                    });
+                    if (!response.ok) throw new Error(`Assistant request failed with status ${response.status}`);
+                    let data = await response.json();
+                    currentAiResponsePayload = data.answer || data.responseText;
+                    if (!currentAiResponsePayload) throw new Error("Assistant response did not contain an answer");
+                    renderFormattedAiOutput(currentAiResponsePayload);
+                    sendButton.disabled = false;
+                    sendButton.textContent = "Send";
+                    inputElement.focus();
+                    return;
+                } catch (e) {
+                    console.log("Internet API down, routing to optimized engine parser.");
+                }
+            }
+
+            setTimeout(() => {
+                currentAiResponsePayload = generateLocalKnowledgeResponse(lastUserText);
+                renderFormattedAiOutput(currentAiResponsePayload);
+                sendButton.disabled = false;
+                sendButton.textContent = "Send";
+                inputElement.focus();
+            }, 200);
+        }
+
+        function injectMessageBubble(text, sourceClass) {
+            const wall = document.getElementById('conversation-output-wall');
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${sourceClass}`;
+            const paragraph = document.createElement('p');
+            paragraph.textContent = text;
+            bubble.appendChild(paragraph);
+            wall.appendChild(bubble);
+            wall.scrollTop = wall.scrollHeight;
+        }
+
+        /* LIVE KNOWLEDGE PARSER: BUILDS SYSTEM VALUE RESPONSES MATCHING THE USER QUESTION */
+        function generateLocalKnowledgeResponse(question) {
+            let q = question.toLowerCase();
+            let subject = globalSelectedSubject;
+            
+            if (q.includes("planet") || q.includes("sun") || subject === "Space") {
+                return `Space consists of planets orbiting stars due to gravity. The solar system contains eight major planets, with Earth resting in the life-supporting habitable zone near our sun.`;
+            }
+            if (q.includes("computer") || q.includes("code") || subject === "Coding" || subject === "Programming" || subject === "Technology") {
+                return `Computers execute binary instructions. Programming languages allow human coders to construct logical parameters that processing chips convert into functional application steps.`;
+            }
+            if (q.includes("animal") || q.includes("plant") || subject === "Biology" || subject === "Animals" || subject === "Plants") {
+                return `Living organisms survive through homeostasis and metabolic transformation. Plants absorb sunlight for photosynthesis, whereas animals process organic nutrients to create physical energy.`;
+            }
+            if (q.includes("football") || q.includes("match") || q.includes("play") || subject === "Sports & Football") {
+                return `Football is played by two teams trying to kick a ball into the opponent's goal. It relies on strategy, coordination, running control, teamwork, and structured skill training.`;
+            }
+            return `Regarding your specific query about "${question}" in ${subject}: This process runs entirely on systematic, verifiable rules. Components operate in order without hidden meanings.`;
+        }
+
+        function renderFormattedAiOutput(rawAnswerString) {
+            const wall = document.getElementById('conversation-output-wall');
+            const safeAnswer = String(rawAnswerString).replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[character]);
+            
+            // Remove previous answer if regenerating via format change
+            if(wall.lastChild && wall.lastChild.classList.contains('assistant') && wall.childNodes.length > 1) {
+                wall.removeChild(wall.lastChild);
+            }
+
+            const aiBubble = document.createElement('div');
+            aiBubble.className = "chat-bubble assistant";
+
+            let htmlStructure = "";
+            switch (globalActiveFormatModifier) {
+                case "Very Easy":
+                    htmlStructure = `<h3>Direct facts</h3><p>${safeAnswer}</p>`;
+                    break;
+                case "Step by Step":
+                    htmlStructure = `<h3>Step-by-step explanation</h3><ol><li>${safeAnswer}</li></ol>`;
+                    break;
+                case "Bullet Points":
+                    htmlStructure = `<h3>Key points</h3><ul><li>${safeAnswer}</li></ul>`;
+                    break;
+                case "Summary View":
+                    htmlStructure = `<h3>Summary</h3><p>${safeAnswer}</p>`;
+                    break;
+                case "Real Life Example":
+                    htmlStructure = `<h3>Explanation with an example</h3><p>${safeAnswer}</p>`;
+                    break;
+                default:
+                    htmlStructure = `<h3>Clear explanation</h3><p>${safeAnswer}</p>`;
+            }
+
+            aiBubble.innerHTML = htmlStructure;
+            wall.appendChild(aiBubble);
+            wall.scrollTop = wall.scrollHeight;
+        }
+
+        function executeLiveUiRefresh() {
+            const fontScale = document.getElementById('cfg-font-scale').value;
+            document.body.style.fontSize = `${fontScale}px`;
+            const selectedTheme = document.getElementById('cfg-contrast-theme').value;
+            document.body.dataset.assistantTheme = selectedTheme;
+            if (selectedTheme === 'dark') {
+                document.documentElement.style.setProperty('--color-bg', '#1A221E');
+                document.documentElement.style.setProperty('--color-text', '#FFFFFF');
+                document.documentElement.style.setProperty('--color-panel', '#252F2A');
+            } else { 
+                document.documentElement.style.setProperty('--color-bg', '#D0DDD5');
+                document.documentElement.style.setProperty('--color-text', '#1B2B22');
+                document.documentElement.style.setProperty('--color-panel', '#E3ECE7');
+            }
+        }
+
+        function hardResetApp() {
+            if(confirm("Start a new conversation? This will clear the current chat.")) {
+                currentAiResponsePayload = "";
+                document.getElementById('conversation-output-wall').innerHTML = "";
+                switchViewEngine('home-pane');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+{
+  "code": "es",
+  "name": "Spanish",
+  "nativeName": "Español",
+  "flag": "🇪🇸",
+  "welcomeMessage": "¡Bienvenido!",
+  "subMessage": "Comuniquémonos juntos.",
+  "categoryLabels": {
+    "actions": "Acciones",
+    "food": "Comida",
+    "feelings": "Sentimientos",
+    "home": "Hogar",
+    "school": "Escuela",
+    "community": "Comunidad",
+    "nature": "Naturaleza",
+    "animals": "Animales"
+  },
+  "aacWords": [
+    { "id": "want", "label": "Quiero", "emoji": "🙋", "category": "needs", "colorClass": "bg-rose-100 hover:bg-rose-200 text-rose-800 border-rose-300" },
+    { "id": "help", "label": "Ayuda", "emoji": "🆘", "category": "needs", "colorClass": "bg-amber-100 hover:bg-amber-200 text-amber-800 border-amber-300" },
+    { "id": "more", "label": "Más", "emoji": "➕", "category": "needs", "colorClass": "bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-300" },
+    { "id": "finished", "label": "Terminado", "emoji": "✅", "category": "needs", "colorClass": "bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border-emerald-300" },
+    { "id": "stop", "label": "Parar", "emoji": "🛑", "category": "action", "colorClass": "bg-red-100 hover:bg-red-200 text-red-800 border-red-300" },
+    { "id": "drink", "label": "Beber", "emoji": "🥛", "category": "action", "colorClass": "bg-sky-100 hover:bg-sky-200 text-sky-800 border-sky-300" },
+    { "id": "eat", "label": "Comer", "emoji": "🍎", "category": "action", "colorClass": "bg-orange-100 hover:bg-orange-200 text-orange-800 border-orange-300" },
+    { "id": "toilet", "label": "Baño", "emoji": "🚽", "category": "places", "colorClass": "bg-indigo-100 hover:bg-indigo-200 text-indigo-800 border-indigo-300" },
+    { "id": "sleep", "label": "Dormir", "emoji": "😴", "category": "action", "colorClass": "bg-violet-100 hover:bg-violet-200 text-violet-800 border-violet-300" },
+    { "id": "play", "label": "Jugar", "emoji": "🧸", "category": "action", "colorClass": "bg-pink-100 hover:bg-pink-200 text-pink-800 border-pink-300" }
+  ],
+  "sentenceBlocks": [
+    { "id": "i_want", "label": "Quiero", "emoji": "🙋", "type": "starter", "colorClass": "bg-rose-100 text-rose-800 border-rose-300" },
+    { "id": "i_feel", "label": "Me siento", "emoji": "😊", "type": "starter", "colorClass": "bg-blue-100 text-blue-800 border-blue-300" },
+    { "id": "can_i", "label": "¿Puedo tener", "emoji": "🤲", "type": "starter", "colorClass": "bg-amber-100 text-amber-800 border-amber-300" },
+    { "id": "let_play", "label": "Vamos a jugar", "emoji": "🪁", "type": "starter", "colorClass": "bg-pink-100 text-pink-800 border-pink-300" },
+    { "id": "act_eat", "label": "comer", "emoji": "🍎", "type": "action", "colorClass": "bg-orange-100 text-orange-800 border-orange-300" },
+    { "id": "act_drink", "label": "beber", "emoji": "🥛", "type": "action", "colorClass": "bg-sky-100 text-sky-800 border-sky-300" },
+    { "id": "obj_apple", "label": "manzana", "emoji": "🍎", "type": "object", "colorClass": "bg-stone-100 text-stone-800 border-stone-300" },
+    { "id": "obj_milk", "label": "leche", "emoji": "🥛", "type": "object", "colorClass": "bg-stone-100 text-stone-800 border-stone-300" },
+    { "id": "feel_happy", "label": "feliz", "emoji": "😊", "type": "feeling", "colorClass": "bg-yellow-100 text-yellow-800 border-yellow-300" },
+    { "id": "feel_sad", "label": "triste", "emoji": "😢", "type": "feeling", "colorClass": "bg-sky-100 text-sky-800 border-sky-300" }
+  ],
+  "vocabulary": {
+    "animals": [
+      {
+        "id": "v_dog",
+        "word": "Perro",
+        "englishWord": "Dog",
+        "emoji": "🐶",
+        "phonetic": "peh-rroh",
+        "category": "animals",
+        "example": "Amo al perro amigable.",
+        "image": "assets/images/dog.png",
+        "audio": "assets/audio/es/dog.mp3",
+        "viseme": ["neutral", "open", "wide", "closed"],
+        "difficulty": 1,
+        "aacSymbol": "🐶"
+      },
+      {
+        "id": "v_cat",
+        "word": "Gato",
+        "englishWord": "Cat",
+        "emoji": "🐱",
+        "phonetic": "gah-toh",
+        "category": "animals",
+        "example": "El gato duerme en la cama.",
+        "image": "assets/images/cat.png",
+        "audio": "assets/audio/es/cat.mp3",
+        "viseme": ["neutral", "wide", "neutral"],
+        "difficulty": 1,
+        "aacSymbol": "🐱"
+      }
+    ],
+    "food": [
+      {
+        "id": "v_apple",
+        "word": "Manzana",
+        "englishWord": "Apple",
+        "emoji": "🍎",
+        "phonetic": "mahn-thah-nah",
+        "category": "food",
+        "example": "Como una manzana roja dulce.",
+        "image": "assets/images/apple.png",
+        "audio": "assets/audio/es/apple.mp3",
+        "viseme": ["neutral", "open", "closed"],
+        "difficulty": 1,
+        "aacSymbol": "🍎"
+      },
+      {
+        "id": "v_milk",
+        "word": "Leche",
+        "englishWord": "Milk",
+        "emoji": "🥛",
+        "phonetic": "leh-cheh",
+        "category": "food",
+        "example": "Yo bebo leche fría.",
+        "image": "assets/images/milk.png",
+        "audio": "assets/audio/es/milk.mp3",
+        "viseme": ["neutral", "closed", "neutral"],
+        "difficulty": 1,
+        "aacSymbol": "🥛"
+      }
+    ],
+    "feelings": [
+      {
+        "id": "v_happy",
+        "word": "Feliz",
+        "englishWord": "Happy",
+        "emoji": "😊",
+        "phonetic": "feh-leeth",
+        "category": "feelings",
+        "example": "Sonrío cuando estoy feliz.",
+        "image": "assets/images/happy.png",
+        "audio": "assets/audio/es/happy.mp3",
+        "viseme": ["neutral", "wide", "neutral"],
+        "difficulty": 1,
+        "aacSymbol": "😊"
+      }
+    ],
+    "home": [
+      {
+        "id": "v_bed",
+        "word": "Cama",
+        "englishWord": "Bed",
+        "emoji": "🛌",
+        "phonetic": "kah-mah",
+        "category": "home",
+        "example": "Mi cama caliente es suave.",
+        "image": "assets/images/bed.png",
+        "audio": "assets/audio/es/bed.mp3",
+        "viseme": ["neutral", "closed", "neutral"],
+        "difficulty": 1,
+        "aacSymbol": "🛏️"
+      }
+    ],
+    "school": [
+      {
+        "id": "v_book",
+        "word": "Libro",
+        "englishWord": "Book",
+        "emoji": "📚",
+        "phonetic": "lee-broh",
+        "category": "school",
+        "example": "Leo un libro con imágenes.",
+        "image": "assets/images/book.png",
+        "audio": "assets/audio/es/book.mp3",
+        "viseme": ["neutral", "closed", "neutral"],
+        "difficulty": 1,
+        "aacSymbol": "📚"
+      }
+    ],
+    "community": [
+      {
+        "id": "v_park",
+        "word": "Parque",
+        "englishWord": "Park",
+        "emoji": "🌳",
+        "phonetic": "pahr-keh",
+        "category": "community",
+        "example": "Nos deslizamos y columpiamos en el parque.",
+        "image": "assets/images/park.png",
+        "audio": "assets/audio/es/park.mp3",
+        "viseme": ["neutral", "open", "neutral"],
+        "difficulty": 2,
+        "aacSymbol": "🌳"
+      }
+    ],
+    "nature": [
+      {
+        "id": "v_tree",
+        "word": "Árbol",
+        "englishWord": "Tree",
+        "emoji": "🌳",
+        "phonetic": "ahr-bol",
+        "category": "nature",
+        "example": "El gran árbol verde tiene ramas de color marrón.",
+        "image": "assets/images/tree.png",
+        "audio": "assets/audio/es/tree.mp3",
+        "viseme": ["neutral", "wide", "neutral"],
+        "difficulty": 1,
+        "aacSymbol": "🌳"
+      }
+    ],
+    "actions": [
+      {
+        "id": "v_run",
+        "word": "Correr",
+        "englishWord": "Run",
+        "emoji": "🏃",
+        "phonetic": "koh-rrehr",
+        "category": "actions",
+        "example": "Me gusta correr rápido en el jardín.",
+        "image": "assets/images/run.png",
+        "audio": "assets/audio/es/run.mp3",
+        "viseme": ["neutral", "open", "neutral"],
+        "difficulty": 2,
+        "aacSymbol": "🏃"
+      }
+    ]
+  }
+}

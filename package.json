@@ -1,0 +1,19 @@
+{
+  "name": "ausome-platform",
+  "private": true,
+  "workspaces": [
+    "ausome",
+    "ausome/focus_module",
+    "ausome/math_module",
+    "ausome/langauge_module",
+    "ausome/sensory_module"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,focus,math,lang,sensory -c blue,green,yellow,magenta,cyan \"npm run dev:server -w ausome\" \"npm run dev -w @ausome/focus-module\" \"npm run dev -w @ausome/math-module\" \"npm run dev -w @ausome/language-module\" \"npm run dev -w @ausome/sensory-module\"",
+    "build": "npm run build --workspaces --if-present",
+    "start": "npm run start -w ausome"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Atkinson Hyperlegible", sans-serif;
+  --color-soft-blue: #7AA676; /* Mapped to Sage Green */
+  --color-soft-green: #E89A3E; /* Mapped to soft warm orange accent */
+  --color-warm-cream: #F0F6EF; /* Gentle light Sage panel */
+  --color-muted-lavender: #3D543B; /* Deep readable Forest Sage text */
+  --color-butter-yellow: #FEF6C7; /* Butter Yellow */
+  --color-sage-accent: #7AA676; /* Rich Sage Green */
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #FAF8F3; /* Cozy, calming warm cream background */
+  color: #2F3E2D; /* Readable deep forest-grey */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* Beautiful, soft, autism-friendly colorful grids in Sage & Butter */
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(122, 166, 118, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(254, 246, 199, 0.6) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(122, 166, 118, 0.08) 0%, transparent 50%),
+    linear-gradient(rgba(122, 166, 118, 0.04) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(122, 166, 118, 0.04) 2px, transparent 2px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* Redefine bg-warm-cream to look like cozy, highly legible sage-cream cards */
+.bg-warm-cream {
+  background-color: #F0F6EF !important;
+  backdrop-filter: none !important;
+  border-color: #C3DEC0 !important;
+  color: #2F3E2D !important;
+}
+
+/* Beautiful child-friendly bold card borders */
+.border-muted-lavender, .border-muted-lavender\/60, .border-muted-lavender\/20 {
+  border-color: #C3DEC0 !important;
+}
+
+/* Make panels with borders look premium and high-tech */
+.border-4.border-muted-lavender {
+  border-width: 4px !important;
+  border-color: #7AA676 !important;
+  box-shadow: 0 8px 16px -4px rgba(61, 84, 59, 0.08) !important;
+}
+
+.border-2.border-muted-lavender {
+  border-width: 3px !important;
+  border-color: #C3DEC0 !important;
+}
+
+.border-8.border-muted-lavender {
+  border-width: 6px !important;
+  border-color: #7AA676 !important;
+  box-shadow: 0 0 30px rgba(122, 166, 118, 0.1) !important;
+}
+
+/* Custom mapping for text fields & secondary text elements */
+.text-muted-lavender {
+  color: #2F3E2D !important;
+}
+
+.text-muted-lavender\/80 {
+  color: #3D543B !important;
+}
+
+.text-muted-lavender\/70 {
+  color: #4E694C !important;
+}
+
+.text-muted-lavender\/60 {
+  color: #5C7E5A !important;
+}
+
+.text-muted-lavender\/40 {
+  color: #8CA988 !important;
+}
+
+/* Dynamic Bento glows for key accent panels */
+.bg-soft-blue {
+  background-color: #FEF6C7 !important; /* Butter Yellow primary active */
+  color: #4D4315 !important;
+  border-color: #F9E684 !important;
+  border-width: 3px !important;
+}
+.bg-soft-blue:hover {
+  background-color: #FCF1B1 !important;
+}
+
+.bg-soft-green {
+  background-color: #E3ECE1 !important; /* Soft soothing sage-green background */
+  color: #2F3E2D !important;
+  border-color: #7AA676 !important;
+  border-width: 3px !important;
+}
+.bg-soft-green:hover {
+  background-color: #D3E2D0 !important;
+}
+
+/* Rounded sensory-friendly focus ring */
+*:focus-visible {
+  outline: 3px solid #7AA676;
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF8F3;
+}
+::-webkit-scrollbar-thumb {
+  background: #7AA676;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5E805B;
+}
+
+/* Extra decorative vibrant items */
+.vibrant-glow {
+  box-shadow: 0 0 20px rgba(122, 166, 118, 0.2);
+}
+
+.vibrant-butter-glow {
+  box-shadow: 0 0 20px rgba(250, 215, 108, 0.3);
+}

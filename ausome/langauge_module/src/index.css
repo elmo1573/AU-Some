@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Comic+Neue:wght@300;400;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Fredoka", "Lora", Georgia, Cambria, serif;
+  --font-sans: "Fredoka", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.125rem; /* 18px by default for high readability and autism-friendly big layout */
+  background-color: #FAF8F5; /* Warm, eye-friendly off-white to prevent overstimulation */
+  color: #2D2D2A;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Beautiful custom smooth focus highlights to avoid overstimulation */
+button:focus-visible, a:focus-visible {
+  outline: 4px solid #81C784;
+  outline-offset: 2px;
+}
+

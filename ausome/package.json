@@ -1,0 +1,30 @@
+{
+  "name": "ausome",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n server,focus,math,lang,sensory -c blue,green,yellow,magenta,cyan \"npm run dev:server\" \"npm run dev:focus\" \"npm run dev:math\" \"npm run dev:language\" \"npm run dev:sensory\"",
+    "dev:server": "tsx server/index.ts",
+    "dev:focus": "npm run dev --prefix focus_module",
+    "dev:math": "npm run dev --prefix math_module",
+    "dev:language": "npm run dev --prefix langauge_module",
+    "dev:sensory": "npm run dev --prefix sensory_module",
+    "build": "npm run build --prefix focus_module && npm run build --prefix math_module && npm run build --prefix langauge_module && npm run build --prefix sensory_module",
+    "start": "cross-env NODE_ENV=production tsx server/index.ts"
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2"
+  }
+}
