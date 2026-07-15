@@ -339,7 +339,7 @@
                     <div class="format-rail-title">Response format</div>
                     <p class="format-rail-help">Choose how you want the answer organized.</p>
                     <button class="format-selection-btn active" onclick="updateStyleModifier(this, 'Easy Explanation')">Easy Explanation</button>
-                    <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Very Easy')">Very Easy</button>
+                    <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Simplify')">Simplify</button>
                     <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Step by Step')">Step by Step</button>
                     <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Bullet Points')">Bullet Points</button>
                     <button class="format-selection-btn" onclick="updateStyleModifier(this, 'Summary View')">Summary Only</button>
@@ -387,6 +387,8 @@
         let globalSelectedSubject = "General Knowledge";
         let globalActiveFormatModifier = "Easy Explanation";
         let currentAiResponsePayload = "";
+        let lastUserQuestion = "";
+        let formatRequestId = 0;
 
         const INTERNET_AI_ENDPOINT = "/api/assistant/chat";
 
@@ -435,6 +437,7 @@
             const wall = document.getElementById('conversation-output-wall');
             wall.innerHTML = ""; // Clears page completely
             currentAiResponsePayload = ""; // Reset current active payload tracker
+            lastUserQuestion = "";
 
             const welcomeBubble = document.createElement('div');
             welcomeBubble.className = "chat-bubble assistant";
@@ -446,16 +449,55 @@
             document.getElementById('query-string-input').focus();
         }
 
-        function updateStyleModifier(element, styleTextName) {
+        async function updateStyleModifier(element, styleTextName) {
             document.querySelectorAll('.format-selection-btn').forEach(b => b.classList.remove('active'));
             element.classList.add('active');
             globalActiveFormatModifier = styleTextName;
             document.getElementById('active-format-label').innerText = styleTextName;
-            
-            // Re-render the current AI response payload using the new structure format rules
-            if (currentAiResponsePayload) {
+
+            if (currentAiResponsePayload && lastUserQuestion) {
+                const requestId = ++formatRequestId;
+                element.disabled = true;
+                document.getElementById('active-format-label').innerText = `${styleTextName}…`;
+                try {
+                    const answer = await requestAssistantAnswer(lastUserQuestion);
+                    if (requestId !== formatRequestId) return;
+                    currentAiResponsePayload = answer;
+                    renderFormattedAiOutput(answer);
+                } catch {
+                    if (requestId === formatRequestId) {
+                        renderFormattedAiOutput(currentAiResponsePayload);
+                    }
+                } finally {
+                    element.disabled = false;
+                    if (requestId === formatRequestId) {
+                        document.getElementById('active-format-label').innerText = styleTextName;
+                    }
+                }
+            } else if (currentAiResponsePayload) {
                 renderFormattedAiOutput(currentAiResponsePayload);
             }
+        }
+
+        async function requestAssistantAnswer(question) {
+            const response = await fetch(INTERNET_AI_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: question,
+                    question,
+                    subject: globalSelectedSubject,
+                    format: globalActiveFormatModifier,
+                    module: "assistant"
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`Assistant request failed with status ${response.status}`);
+            }
+            const data = await response.json();
+            const answer = data.answer || data.responseText;
+            if (!answer) throw new Error("Assistant response did not contain an answer");
+            return answer;
         }
 
         function checkExecuteKey(e) {
@@ -469,6 +511,7 @@
             if (!queryText) return;
 
             const lastUserText = queryText;
+            lastUserQuestion = queryText;
 
             injectMessageBubble(lastUserText, 'user');
             inputElement.value = "";
@@ -478,21 +521,7 @@
 
             if (INTERNET_AI_ENDPOINT) {
                 try {
-                    let response = await fetch(INTERNET_AI_ENDPOINT, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            message: lastUserText,
-                            question: lastUserText,
-                            subject: globalSelectedSubject,
-                            format: globalActiveFormatModifier,
-                            module: "assistant"
-                        })
-                    });
-                    if (!response.ok) throw new Error(`Assistant request failed with status ${response.status}`);
-                    let data = await response.json();
-                    currentAiResponsePayload = data.answer || data.responseText;
-                    if (!currentAiResponsePayload) throw new Error("Assistant response did not contain an answer");
+                    currentAiResponsePayload = await requestAssistantAnswer(lastUserText);
                     renderFormattedAiOutput(currentAiResponsePayload);
                     sendButton.disabled = false;
                     sendButton.textContent = "Send";
@@ -543,17 +572,41 @@
             return `Regarding your specific query about "${question}" in ${subject}: This process runs entirely on systematic, verifiable rules. Components operate in order without hidden meanings.`;
         }
 
-        function renderFormattedAiOutput(rawAnswerString) {
-            const wall = document.getElementById('conversation-output-wall');
-            const safeAnswer = String(rawAnswerString).replace(/[&<>"']/g, character => ({
+        function escapeAssistantHtml(value) {
+            return String(value).replace(/[&<>"']/g, character => ({
                 '&': '&amp;',
                 '<': '&lt;',
                 '>': '&gt;',
                 '"': '&quot;',
                 "'": '&#039;'
             })[character]);
-            
-            // Remove previous answer if regenerating via format change
+        }
+
+        function renderInlineMarkdown(value) {
+            return escapeAssistantHtml(value)
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        }
+
+        function getBulletItems(rawAnswerString) {
+            const lines = String(rawAnswerString)
+                .split(/\r?\n/)
+                .map(line => line.trim())
+                .filter(Boolean);
+            const bullets = lines
+                .filter(line => /^[-*•]\s+/.test(line))
+                .map(line => line.replace(/^[-*•]\s+/, ''));
+
+            if (bullets.length) return bullets;
+
+            return String(rawAnswerString)
+                .match(/[^.!?]+[.!?]+|[^.!?]+$/g)
+                ?.map(sentence => sentence.trim())
+                .filter(Boolean) || [];
+        }
+
+        function renderFormattedAiOutput(rawAnswerString) {
+            const wall = document.getElementById('conversation-output-wall');
+
             if(wall.lastChild && wall.lastChild.classList.contains('assistant') && wall.childNodes.length > 1) {
                 wall.removeChild(wall.lastChild);
             }
@@ -563,23 +616,34 @@
 
             let htmlStructure = "";
             switch (globalActiveFormatModifier) {
-                case "Very Easy":
-                    htmlStructure = `<h3>Direct facts</h3><p>${safeAnswer}</p>`;
+                case "Simplify": {
+                    const paragraphs = String(rawAnswerString)
+                        .split(/\n{2,}/)
+                        .map(text => text.trim())
+                        .filter(Boolean)
+                        .map(text => `<p>${renderInlineMarkdown(text)}</p>`)
+                        .join('');
+                    htmlStructure = `<h3>Simplified answer</h3>${paragraphs}`;
                     break;
+                }
                 case "Step by Step":
-                    htmlStructure = `<h3>Step-by-step explanation</h3><ol><li>${safeAnswer}</li></ol>`;
+                    htmlStructure = `<h3>Step-by-step explanation</h3><ol><li>${renderInlineMarkdown(rawAnswerString)}</li></ol>`;
                     break;
-                case "Bullet Points":
-                    htmlStructure = `<h3>Key points</h3><ul><li>${safeAnswer}</li></ul>`;
+                case "Bullet Points": {
+                    const items = getBulletItems(rawAnswerString)
+                        .map(item => `<li>${renderInlineMarkdown(item)}</li>`)
+                        .join('');
+                    htmlStructure = `<h3>Bullet points</h3><ul>${items}</ul>`;
                     break;
+                }
                 case "Summary View":
-                    htmlStructure = `<h3>Summary</h3><p>${safeAnswer}</p>`;
+                    htmlStructure = `<h3>Summary</h3><p>${renderInlineMarkdown(rawAnswerString)}</p>`;
                     break;
                 case "Real Life Example":
-                    htmlStructure = `<h3>Explanation with an example</h3><p>${safeAnswer}</p>`;
+                    htmlStructure = `<h3>Explanation with an example</h3><p>${renderInlineMarkdown(rawAnswerString)}</p>`;
                     break;
                 default:
-                    htmlStructure = `<h3>Clear explanation</h3><p>${safeAnswer}</p>`;
+                    htmlStructure = `<h3>Clear explanation</h3><p>${renderInlineMarkdown(rawAnswerString)}</p>`;
             }
 
             aiBubble.innerHTML = htmlStructure;
@@ -606,6 +670,7 @@
         function hardResetApp() {
             if(confirm("Start a new conversation? This will clear the current chat.")) {
                 currentAiResponsePayload = "";
+                lastUserQuestion = "";
                 document.getElementById('conversation-output-wall').innerHTML = "";
                 switchViewEngine('home-pane');
             }

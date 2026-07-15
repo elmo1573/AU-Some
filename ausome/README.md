@@ -73,4 +73,6 @@ npm run start
 - `POST /api/au-bot` (legacy alias for focus game)
 - `GET /api/health`
 
+The assistant supports response formats including **Simplify** and **Bullet Points**. Choosing a format rewrites the latest answer using plain-language or scan-friendly rules rather than only changing its visual layout.
+
 Legacy HTML filenames redirect automatically (`/games.html` → `/games`, etc.).

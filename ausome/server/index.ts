@@ -396,7 +396,13 @@ function offlineAssistantReply(opts: {
   module?: string;
   triggerContext?: string;
 }) {
-  const { message = "", subject = "General", module = "hub", triggerContext } = opts;
+  const {
+    message = "",
+    subject = "General",
+    format = "Easy Explanation",
+    module = "hub",
+    triggerContext,
+  } = opts;
   const text = message.toLowerCase();
 
   if (module === "focus" || triggerContext) {
@@ -409,17 +415,67 @@ function offlineAssistantReply(opts: {
     return gameReplies[triggerContext || ""] || gameReplies.default;
   }
 
+  let answer: string;
   if (text.includes("schedule")) {
-    return "Let's build a gentle schedule together. How many main tasks would you like today — 2, 3, or 4?";
-  }
-  if (text.includes("overwhelm") || text.includes("anxious") || text.includes("stress")) {
-    return "I hear you. Let's take one slow breath together — in for 4, hold for 4, out for 4.";
-  }
-  if (text.includes("activity") || text.includes("game")) {
-    return "How about a short focus game, a calming sensory activity, or a quick walk? We can adjust anything.";
+    answer = "A short schedule can make daily tasks feel more predictable. Choose two, three, or four main tasks for your day.";
+  } else if (text.includes("overwhelm") || text.includes("anxious") || text.includes("stress")) {
+    answer = "Pause and take one slow breath. Breathe in for four, hold for four, then breathe out for four.";
+  } else if (text.includes("activity") || text.includes("game")) {
+    answer = "Try a short focus game, calming sensory activity, or gentle walk. You can stop or change the activity anytime.";
+  } else {
+    answer = `Your question is about ${subject}: ${message || "learning at your own pace"}. The full assistant is temporarily unavailable, so please try again soon.`;
   }
 
-  return `Here is a calm ${opts.format || "explanation"} about ${subject}: ${message || "I'm here to help you learn at your own pace."}`;
+  if (format === "Simplify") {
+    return `**Main answer:** ${answer}
+
+Read one sentence at a time, and pause whenever needed.
+
+You can ask for any difficult word to be explained.
+
+In short: **Focus on the main answer shown first.**`;
+  }
+
+  if (format === "Bullet Points") {
+    return `- **Main answer:** ${answer}
+
+- Ask for any part that needs another explanation.
+
+- **Key Takeaway:** Focus on the main answer shown first.`;
+  }
+
+  return answer;
+}
+
+function getAssistantFormatRules(format: string) {
+  if (format === "Simplify") {
+    return `Rewrite the answer in plain, everyday English.
+Use 3 to 6 sentences. Keep each sentence between 8 and 15 words.
+Explain only one idea at a time.
+Replace difficult words with simple words. If a difficult word is necessary, explain it immediately.
+Remove filler, unnecessary details, and unrelated information.
+Do not use idioms, sarcasm, metaphors, jokes, or figurative language.
+Use Markdown bold (**text**) for important words, keywords, numbers, dates, and final answers.
+End with one short summary sentence beginning exactly with "In short:".`;
+  }
+
+  if (format === "Bullet Points") {
+    return `Rewrite the answer as an organized Markdown bullet list, not paragraphs.
+Give the main answer in the first bullet.
+Group related information naturally. Each bullet must contain only 1 to 3 short sentences.
+Order bullets from most important information to supporting details.
+Use Markdown bold (**text**) for important words, definitions, numbers, formulas, names, and key facts.
+Put each bullet on its own line and leave a blank line between bullets.
+End with a final bullet beginning exactly with "**Key Takeaway:**" and summarize the answer in one sentence.`;
+  }
+
+  const rules: Record<string, string> = {
+    "Very Easy": "Use very simple words and short sentences.",
+    "Step by Step": "Explain the answer as a short, numbered sequence.",
+    "Summary View": "Give only a concise summary of the answer.",
+    "Real Life Example": "Explain clearly and include one concrete real-life example.",
+  };
+  return rules[format] || "Give a clear answer using short paragraphs.";
 }
 
 async function runAssistantChat(opts: {
@@ -449,8 +505,10 @@ You are speaking directly to them during a memory matching game.
 Rules: short sentences, no pressure, under 2 sentences, warm tone.
 Context trigger: ${triggerContext || "general support"}.`
     : `You are AU-SOME Assistant, a calm learning helper for autistic children and their families.
-Subject: ${subject}. Response style: ${format}.
-Rules: plain language, short paragraphs, supportive tone, no urgency or negative framing.
+Subject: ${subject}.
+Rules: use a supportive tone with no urgency, pressure, or negative framing.
+Follow these response-format rules exactly:
+${getAssistantFormatRules(format)}
 Module context: ${module}.`;
 
   const response = await ai.models.generateContent({
@@ -458,7 +516,7 @@ Module context: ${module}.`;
     contents: message || "Hello!",
     config: {
       systemInstruction: systemPrompt,
-      temperature: 0.7,
+      temperature: 0.4,
     },
   });
 
@@ -473,10 +531,10 @@ app.post("/api/assistant/chat", async (req, res) => {
   } catch (error) {
     console.error("Assistant API Error:", error);
     const fallback = offlineAssistantReply(req.body);
-    res.status(500).json({
-      error: "Could not fetch AI response.",
+    res.json({
       answer: fallback,
       responseText: fallback,
+      offline: true,
     });
   }
 });
