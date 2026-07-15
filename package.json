@@ -8,6 +8,9 @@
     "ausome/langauge_module",
     "ausome/sensory_module"
   ],
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "concurrently -n server,focus,math,lang,sensory -c blue,green,yellow,magenta,cyan \"npm run dev:server -w ausome\" \"npm run dev -w @ausome/focus-module\" \"npm run dev -w @ausome/math-module\" \"npm run dev -w @ausome/language-module\" \"npm run dev -w @ausome/sensory-module\"",
     "build": "npm run build -w @ausome/focus-module && npm run build -w @ausome/math-module && npm run build -w @ausome/language-module && npm run build -w @ausome/sensory-module",
